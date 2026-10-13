@@ -1,0 +1,1071 @@
+<title>Feuille de service HMC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;0,6..96,700;1,6..96,500&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: une "feuille de service" de plateau — en-tête de production, onglets façon départements, données en mono */
+:root{
+  --bg:#F6F2F1; --paper:#FFFFFF; --ink:#1F1A1E; --muted:#6E6369; --line:#E2D9DA;
+  --accent:#A3233F; --accent-soft:#F4E1E5;
+  --ok:#2F7A4F; --ok-soft:#E1F0E6; --warn:#9A5B00; --warn-soft:#FBEBD2; --off:#7B7378; --off-soft:#ECE7E8;
+  --f-display:"Bodoni Moda","Didot",Georgia,serif;
+  --f-body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#161214; --paper:#1F1A1D; --ink:#F1E9EB; --muted:#A99CA3; --line:#352D31;
+  --accent:#E8607E; --accent-soft:#3A1E26; --ok:#7FCB9C; --ok-soft:#1C3026; --warn:#F0B866; --warn-soft:#3A2B14; --off:#A59BA0; --off-soft:#2A2427;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#161214; --paper:#1F1A1D; --ink:#F1E9EB; --muted:#A99CA3; --line:#352D31;
+  --accent:#E8607E; --accent-soft:#3A1E26; --ok:#7FCB9C; --ok-soft:#1C3026; --warn:#F0B866; --warn-soft:#3A2B14; --off:#A59BA0; --off-soft:#2A2427;
+  color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:1100px;margin:0 auto;padding-inline:18px;padding-block:22px 64px}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h2{font-family:var(--f-display);font-weight:500;font-size:26px;margin:0 0 4px;text-wrap:balance}
+h3{margin:0}
+.lede{color:var(--muted);max-width:65ch;margin:0 0 18px}
+.eyebrow{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+
+/* En-tête */
+.head{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:end;border-bottom:2px solid var(--ink);padding-bottom:14px}
+h1{font-family:var(--f-display);font-weight:500;font-size:clamp(34px,6vw,56px);line-height:1;margin:6px 0 0;letter-spacing:-.01em}
+h1 em{color:var(--accent)}
+.slate{font-family:var(--f-mono);font-size:12px;display:grid;grid-template-columns:auto auto;gap:2px 14px;margin:0}
+.slate dt{color:var(--muted);text-transform:uppercase;letter-spacing:.1em;font-size:10.5px;align-self:center}
+.slate dd{margin:0;font-variant-numeric:tabular-nums}
+@media (max-width:620px){.head{grid-template-columns:1fr}}
+
+/* Onglets */
+.tabs{display:flex;gap:2px;margin:16px 0 22px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+.tab{appearance:none;background:none;border:0;border-bottom:3px solid transparent;padding:10px 12px 9px;font:600 14px var(--f-body);color:var(--muted);cursor:pointer;white-space:nowrap;display:flex;gap:7px;align-items:center}
+.tab[aria-selected="true"]{color:var(--ink);border-color:var(--accent)}
+.n{font:500 11px var(--f-mono);background:var(--accent);color:var(--paper);border-radius:9px;padding:1px 6px}
+
+/* Contrôles */
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:end}
+label.f{display:grid;gap:4px;font-size:12px;color:var(--muted);flex:1 1 180px;min-width:0}
+label.f.s{flex:0 1 170px}
+input,select,textarea{font:inherit;font-size:14px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:8px 10px;width:100%;min-width:0}
+textarea{resize:vertical;min-height:70px}
+.btn{appearance:none;border:1px solid var(--ink);background:var(--ink);color:var(--bg);font:600 14px var(--f-body);padding:9px 14px;border-radius:4px;cursor:pointer;white-space:nowrap}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.acc{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+.btn.sm{padding:5px 10px;font-size:12.5px}
+.btn.danger{background:transparent;color:var(--accent);border-color:var(--accent)}
+.seg{display:flex;border:1px solid var(--line);border-radius:4px;overflow:hidden;flex-wrap:wrap}
+.seg button{appearance:none;border:0;background:var(--bg);color:var(--ink);font:500 13px var(--f-body);padding:7px 11px;cursor:pointer;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{appearance:none;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:4px 11px;font:13px var(--f-body);cursor:pointer}
+.chip[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.lab{font-size:12px;color:var(--muted);margin-bottom:6px}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:16px;min-width:0}
+.stack{display:grid;gap:12px}
+.msg{font-size:13px;color:var(--muted)}
+.msg.err{color:var(--accent)}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:12px}
+.empty{background:var(--paper);border:1px dashed var(--line);border-radius:6px;padding:24px;text-align:center;color:var(--muted)}
+
+/* Aujourd'hui */
+.today{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:820px){.today{grid-template-columns:1fr}}
+.todo{display:grid}
+.todo .it{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px dashed var(--line)}
+.todo .it:last-child{border-bottom:0}
+.todo .k{font:500 10.5px var(--f-mono);text-transform:uppercase;letter-spacing:.08em;padding:3px 7px;border-radius:3px;white-space:nowrap}
+.k.r{background:var(--accent-soft);color:var(--accent)} .k.v{background:var(--ok-soft);color:var(--ok)} .k.p{background:var(--off-soft);color:var(--ink)} .k.w{background:var(--warn-soft);color:var(--warn)}
+.todo .t{min-width:0;overflow-wrap:anywhere;font-size:14px}
+.todo .t small{display:block;color:var(--muted);font-size:12.5px}
+.sec-t{display:flex;justify-content:space-between;align-items:baseline;gap:10px;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:4px}
+.sec-t h3{font-family:var(--f-display);font-weight:500;font-size:20px}
+.goal{display:grid;gap:8px}
+.big{font:500 34px var(--f-mono);font-variant-numeric:tabular-nums;line-height:1}
+.big small{font-size:15px;color:var(--muted)}
+.bar{height:8px;background:var(--off-soft);border-radius:4px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:4px}
+.uni{display:grid;grid-template-columns:76px 1fr auto;gap:6px 10px;align-items:center;font-size:13px;padding:6px 0}
+.uni .bar{height:6px}
+.uni .num{font:12px var(--f-mono);color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.veille{font-size:13px;color:var(--muted);background:var(--bg);border-radius:4px;padding:10px 12px}
+.veille b{color:var(--ink)}
+
+/* Chercher */
+.depts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}
+.dept header{display:flex;justify-content:space-between;align-items:baseline;gap:8px;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:6px}
+.dept h3{font-family:var(--f-display);font-weight:500;font-size:21px}
+.prio{font:500 10.5px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.prio.b{color:var(--muted)}
+.src{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:9px 0;border-bottom:1px dashed var(--line);text-decoration:none;color:var(--ink)}
+.src:last-child{border-bottom:0}
+.src b{font-weight:600;font-size:14px}
+.src span{grid-column:1;font-size:12.5px;color:var(--muted)}
+.src i{grid-row:1/3;grid-column:2;align-self:center;font:12px var(--f-mono);color:var(--accent)}
+.src:hover b{color:var(--accent)}
+.tip{font-size:12.5px;color:var(--muted);background:var(--bg);border-radius:4px;padding:8px 10px;margin:8px 0 6px}
+
+/* Cartes (pistes / réseau / agenda) */
+.list{display:grid;gap:8px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:12px 14px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 14px;align-items:start}
+.card.due{border-color:var(--accent)}
+.card.st-booke{border-left:4px solid var(--ok)}
+.card.st-refus{opacity:.62}
+.card h4{margin:0;font-size:15.5px;font-weight:600;overflow-wrap:anywhere}
+.meta{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12.5px;color:var(--muted);grid-column:1/-1;align-items:center}
+.m{font-family:var(--f-mono);font-size:12px}
+.notes{grid-column:1/-1;font-size:13.5px;margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.pill{font:500 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;border-radius:3px;padding:2px 7px;white-space:nowrap}
+.u-cinema,.u-pub{background:var(--accent-soft);color:var(--accent)}
+.u-mode{background:var(--off-soft);color:var(--ink)}
+.u-mariage{background:var(--warn-soft);color:var(--warn)}
+.u-autre,.u-marque{background:var(--off-soft);color:var(--off)}
+.pay-remunere{background:var(--ok-soft);color:var(--ok)} .pay-benevole{background:var(--warn-soft);color:var(--warn)} .pay-salarie{background:var(--off-soft);color:var(--ink)} .pay-inconnu{background:var(--off-soft);color:var(--off)}
+.card.ann.st-postulee{border-left:4px solid var(--ok)}
+.card.ann.st-masquee{opacity:.55}
+.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+.chk{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--muted)}
+.chk input{width:auto}
+.feedhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px}
+.tag{font:500 10px var(--f-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);border:1px solid var(--line);border-radius:3px;padding:1px 5px}
+.tag.new{color:var(--ok);border-color:var(--ok)}
+.flag{color:var(--accent);font-weight:600}
+.actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;align-items:center}
+.card select{width:auto;font-size:13px;padding:5px 8px}
+.sub{grid-column:1/-1}
+.out{white-space:pre-wrap;overflow-wrap:anywhere;background:var(--bg);border-radius:4px;padding:12px 14px;font-size:14px;margin:6px 0;max-width:72ch}
+.heat-chaud{background:var(--accent-soft);color:var(--accent)} .heat-tiede{background:var(--warn-soft);color:var(--warn)} .heat-froid{background:var(--off-soft);color:var(--off)}
+.ag-opt{background:var(--warn-soft);color:var(--warn)} .ag-ok{background:var(--ok-soft);color:var(--ok)}
+.month{font:500 11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:14px 0 4px}
+.paste{display:grid;gap:10px;margin-bottom:14px}
+.paste textarea{min-height:110px}
+
+/* Messages */
+.tpls{display:grid;gap:14px}
+.tpl header{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:8px}
+.tpl h3{font-size:16px;font-weight:600}
+.tpl .when{font-size:12.5px;color:var(--muted)}
+.tpl pre{font-family:var(--f-body);font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere;background:var(--bg);border-radius:4px;padding:12px 14px;margin:0 0 10px;max-width:72ch}
+mark{background:var(--accent-soft);color:var(--accent);padding:0 2px;border-radius:2px}
+.tarifs{display:grid;gap:8px}
+.tarifs .tr{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) auto;gap:8px;align-items:center}
+.foot{margin-top:40px;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <div class="head">
+    <div>
+      <h1>Make <em>up</em></h1>
+    </div>
+    <dl class="slate">
+      <dt>Artiste</dt><dd id="slate-name">—</dd>
+      <dt>Date</dt><dd id="slate-date">—</dd>
+      <dt>Semaine</dt><dd id="slate-week">0 / 10 contacts</dd>
+    </dl>
+  </div>
+
+  <div class="tabs" role="tablist" id="tabs">
+    <button class="tab" role="tab" data-t="annonces" aria-selected="true">Annonces Paris <span class="n" id="b-ann" hidden></span></button>
+    <button class="tab" role="tab" data-t="jour" aria-selected="false">Aujourd'hui <span class="n" id="b-jour" hidden></span></button>
+    <button class="tab" role="tab" data-t="chercher" aria-selected="false">Chercher</button>
+    <button class="tab" role="tab" data-t="pistes" aria-selected="false">Pistes <span class="n" id="b-pistes" hidden></span></button>
+    <button class="tab" role="tab" data-t="reseau" aria-selected="false">Réseau</button>
+    <button class="tab" role="tab" data-t="agenda" aria-selected="false">Agenda</button>
+    <button class="tab" role="tab" data-t="messages" aria-selected="false">Messages</button>
+    <button class="tab" role="tab" data-t="reglages" aria-selected="false">Profil</button>
+  </div>
+
+  <!-- ANNONCES -->
+  <section id="p-annonces" role="tabpanel">
+    <div class="feedhead"><h2>Annonces à Paris</h2><span class="msg" id="ann-maj"></span></div>
+    <p class="lede">Toutes les annonces trouvées pour une maquilleuse à Paris et en petite couronne : plateformes de tournage, sites d'emploi, et posts Instagram ou Facebook quand ils sont publics. Une annonce vue dans un groupe ou en story ? Colle-la en bas de la page pour l'ajouter.</p>
+    <div class="filters">
+      <div class="seg" id="ann-uni">
+        <button type="button" data-v="" aria-pressed="true">Toutes</button>
+        <button type="button" data-v="tournage" aria-pressed="false">Ciné · TV · pub</button>
+        <button type="button" data-v="mode" aria-pressed="false">Mode</button>
+        <button type="button" data-v="mariage" aria-pressed="false">Mariage</button>
+        <button type="button" data-v="marque" aria-pressed="false">Postes en marque</button>
+      </div>
+      <div class="seg" id="ann-pay">
+        <button type="button" data-v="" aria-pressed="true">Tout</button>
+        <button type="button" data-v="remunere" aria-pressed="false">Payé</button>
+        <button type="button" data-v="benevole" aria-pressed="false">Bénévole</button>
+      </div>
+      <label class="chk" for="ann-hid"><input type="checkbox" id="ann-hid"> Afficher les masquées</label>
+    </div>
+    <div class="list" id="annlist"><div class="empty">Chargement des annonces…</div></div>
+
+    <div class="panel stack" style="margin-top:20px">
+      <div class="sec-t"><h3>Ajouter une annonce vue ailleurs</h3></div>
+      <label class="f" for="ann-paste">Texte de l'annonce (Instagram, Facebook, WhatsApp, mail…)
+        <textarea id="ann-paste" placeholder="Ex. « Cherche MUA pour clip samedi 25/10 à Paris 11e, 150 €, DM @… »"></textarea>
+      </label>
+      <div class="row">
+        <label class="f" for="ann-lien">Lien du post (si tu l'as)<input id="ann-lien" type="url" placeholder="https://www.instagram.com/p/…"></label>
+        <button class="btn acc" type="button" id="ann-add">Ajouter au fil</button>
+      </div>
+      <span class="msg" id="ann-msg"></span>
+    </div>
+  </section>
+
+  <!-- AUJOURD'HUI -->
+  <section id="p-jour" role="tabpanel" hidden>
+    <div class="today">
+      <div class="panel">
+        <div class="sec-t"><h3 id="todo-title">À faire aujourd'hui</h3><span class="msg" id="todo-count"></span></div>
+        <div class="todo" id="todo"><div class="msg" style="padding:12px 0">Chargement…</div></div>
+      </div>
+      <div class="stack">
+        <div class="panel goal">
+          <div class="sec-t"><h3>Objectif de la semaine</h3><button class="btn ghost sm" type="button" data-goto="reglages">Changer</button></div>
+          <div class="big" id="goal-num">0 <small>/ 10 contacts</small></div>
+          <div class="bar"><i id="goal-bar" style="width:0%"></i></div>
+          <div class="msg" id="goal-msg">Un contact = une candidature, un mail de démarchage ou un message réseau.</div>
+        </div>
+        <div class="panel">
+          <div class="sec-t"><h3>Ce qui marche</h3><span class="msg">taux de réponse</span></div>
+          <div id="stats"></div>
+        </div>
+        <div class="veille" id="veille">La veille automatique cherche de nouvelles annonces chaque matin de semaine et les ajoute aux Pistes.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHERCHER -->
+  <section id="p-chercher" role="tabpanel" hidden>
+    <h2>Toutes les annonces, en un clic</h2>
+    <p class="lede">Chaque lien ouvre la recherche déjà filtrée sur le bon site, avec ta ville et la fraîcheur choisies. Trouvé quelque chose ? Copie le texte de l'annonce et colle-le dans l'onglet Pistes.</p>
+    <div class="panel stack" style="margin-bottom:22px">
+      <div class="row">
+        <label class="f" for="q-ville">Zone<input id="q-ville" value="Paris et petite couronne" disabled></label>
+        <div>
+          <div class="lab">Publiées depuis</div>
+          <div class="seg" id="q-period">
+            <button type="button" data-v="d">24 h</button><button type="button" data-v="w">7 jours</button><button type="button" data-v="m">1 mois</button><button type="button" data-v="">Tout</button>
+          </div>
+        </div>
+      </div>
+      <div><div class="lab">Mots-clés ajoutés aux recherches</div><div class="chips" id="q-kw"></div></div>
+    </div>
+    <div class="depts" id="depts"></div>
+  </section>
+
+  <!-- PISTES -->
+  <section id="p-pistes" role="tabpanel" hidden>
+    <h2>Pistes</h2>
+    <p class="lede">Annonces, prods et clients à contacter. La relance se cale à 7 jours après l'envoi. Les pistes marquées « veille » ont été trouvées automatiquement ce matin, celles marquées « liste » sont des prods à démarcher.</p>
+
+    <div class="panel paste" id="paste-box">
+      <label class="f" for="paste">Colle une annonce (Facebook, LinkedIn, mail…) : la piste se remplit et un message adapté est rédigé
+        <textarea id="paste" placeholder="Ex. « Recherche maquilleuse renfort pour tournage pub le 24/10 à Paris, 1 jour, tarif 300 €. Contact : prod@… »"></textarea>
+      </label>
+      <div class="row" style="justify-content:space-between;align-items:center">
+        <span class="msg" id="paste-msg"></span>
+        <div class="actions"><button class="btn ghost" type="button" id="open-add">Saisir à la main</button><button class="btn acc" type="button" id="paste-go">Analyser l'annonce</button></div>
+      </div>
+      <div id="paste-out" hidden></div>
+    </div>
+
+    <form class="panel stack" id="pf" hidden style="margin-bottom:14px">
+      <div class="sec-t"><h3 id="pf-title">Nouvelle piste</h3></div>
+      <div class="row">
+        <label class="f" for="pf-nom">Qui ? (prod, film, photographe, couple…)<input id="pf-nom" required></label>
+        <label class="f s" for="pf-univers">Univers<select id="pf-univers"></select></label>
+      </div>
+      <div class="row">
+        <label class="f" for="pf-contact">Contact (nom, email, @insta)<input id="pf-contact"></label>
+        <label class="f" for="pf-lien">Lien de l'annonce<input id="pf-lien" type="url" placeholder="https://…"></label>
+      </div>
+      <div class="row">
+        <label class="f s" for="pf-statut">Statut<select id="pf-statut"></select></label>
+        <label class="f s" for="pf-envoi">Envoyé le<input id="pf-envoi" type="date"></label>
+        <label class="f s" for="pf-dates">Dates de mission<input id="pf-dates" placeholder="ex. 24-25 oct."></label>
+        <label class="f s" for="pf-tarif">Tarif<input id="pf-tarif" placeholder="ex. 300 €/j"></label>
+      </div>
+      <label class="f" for="pf-notes">Notes<textarea id="pf-notes"></textarea></label>
+      <div class="row" style="justify-content:space-between;align-items:center">
+        <span class="msg" id="pf-msg"></span>
+        <div class="actions"><button class="btn ghost" type="button" id="pf-cancel">Annuler</button><button class="btn" type="submit" id="pf-save">Enregistrer</button></div>
+      </div>
+    </form>
+
+    <div class="toolbar">
+      <div class="seg" id="pfilter">
+        <button type="button" data-v="traiter" aria-pressed="true">À traiter</button>
+        <button type="button" data-v="cours" aria-pressed="false">En cours</button>
+        <button type="button" data-v="booke" aria-pressed="false">Bookées</button>
+        <button type="button" data-v="toutes" aria-pressed="false">Toutes</button>
+      </div>
+      <div class="row" style="gap:8px">
+        <select id="puni" aria-label="Univers" style="width:auto"><option value="">Tous univers</option></select>
+        <input id="pq" placeholder="Rechercher…" aria-label="Rechercher une piste" style="width:170px">
+      </div>
+    </div>
+    <div class="list" id="plist"><div class="empty">Chargement des pistes…</div></div>
+  </section>
+
+  <!-- RÉSEAU -->
+  <section id="p-reseau" role="tabpanel" hidden>
+    <h2>Réseau</h2>
+    <p class="lede">Au cinéma et en pub, la plupart des renforts sont appelés directement par la cheffe maquilleuse, sans annonce. Ici, les personnes à connaître et quand les recontacter (tous les 30 jours par défaut, sans insister).</p>
+    <div class="depts" style="margin-bottom:18px">
+      <div class="panel dept">
+        <header><h3>Où les trouver</h3></header>
+        <a class="src" id="rs-crew" target="_blank" rel="noopener"><b>Équipes maquillage sur Crew United</b><span>Les fiches de films listent la cheffe maquilleuse et ses renforts</span><i>ouvrir ↗</i></a>
+        <a class="src" id="rs-insta" target="_blank" rel="noopener"><b>Cheffes maquilleuses sur Instagram</b><span>Beaucoup postent leurs tournages en cours</span><i>ouvrir ↗</i></a>
+        <a class="src" id="rs-li" target="_blank" rel="noopener"><b>Chef·fes maquilleur·ses sur LinkedIn</b><span>Profils « chef maquilleur cinéma »</span><i>ouvrir ↗</i></a>
+        <p class="tip">Le générique de fin d'un film ou d'une série tourné récemment donne aussi le nom de toute l'équipe maquillage.</p>
+      </div>
+      <form class="panel stack" id="rf">
+        <div class="sec-t"><h3>Ajouter une personne</h3></div>
+        <div class="row">
+          <label class="f" for="rf-nom">Nom<input id="rf-nom" required></label>
+          <label class="f s" for="rf-role">Rôle<select id="rf-role"></select></label>
+        </div>
+        <div class="row">
+          <label class="f" for="rf-contact">Contact (email, @insta, tél.)<input id="rf-contact"></label>
+          <label class="f s" for="rf-heat">Relation<select id="rf-heat"><option value="froid">Pas encore contacté·e</option><option value="tiede">Échange en cours</option><option value="chaud">A déjà fait appel à elle</option></select></label>
+        </div>
+        <label class="f" for="rf-ou">Vu·e sur (film, série, pub, compte…)<input id="rf-ou"></label>
+        <div class="row" style="justify-content:space-between;align-items:center"><span class="msg" id="rf-msg"></span><button class="btn" type="submit">Ajouter</button></div>
+      </form>
+    </div>
+    <div class="toolbar"><div class="seg" id="rfilter"></div></div>
+    <div class="list" id="rlist"><div class="empty">Chargement…</div></div>
+  </section>
+
+  <!-- AGENDA -->
+  <section id="p-agenda" role="tabpanel" hidden>
+    <h2>Agenda</h2>
+    <p class="lede">Missions bookées et options posées. Avant d'accepter une date, un coup d'œil ici évite les doublons.</p>
+    <form class="panel stack" id="af" style="margin-bottom:16px">
+      <div class="row">
+        <label class="f" for="af-titre">Mission<input id="af-titre" required placeholder="ex. Pub parfum · Prod X"></label>
+        <label class="f s" for="af-univers">Univers<select id="af-univers"></select></label>
+        <label class="f s" for="af-statut">Statut<select id="af-statut"><option value="confirme">Confirmé</option><option value="option">Option</option></select></label>
+      </div>
+      <div class="row">
+        <label class="f s" for="af-debut">Du<input id="af-debut" type="date" required></label>
+        <label class="f s" for="af-fin">Au (si plusieurs jours)<input id="af-fin" type="date"></label>
+        <label class="f s" for="af-tarif">Tarif<input id="af-tarif" placeholder="ex. 300 €/j"></label>
+        <label class="f" for="af-lieu">Lieu / convocation<input id="af-lieu" placeholder="ex. Studio, 6 h PAT 8 h"></label>
+      </div>
+      <div class="row" style="justify-content:space-between;align-items:center"><span class="msg" id="af-msg"></span><button class="btn" type="submit">Ajouter à l'agenda</button></div>
+    </form>
+    <div id="alist"><div class="empty">Chargement…</div></div>
+  </section>
+
+  <!-- MESSAGES -->
+  <section id="p-messages" role="tabpanel" hidden>
+    <h2>Messages</h2>
+    <p class="lede">Ses infos (onglet Profil) s'insèrent dans chaque modèle. Les passages surlignés sont à personnaliser. Pour un message fait sur mesure, utilise « Écrire le message » sur une piste.</p>
+    <div class="tpls" id="tpls"></div>
+  </section>
+
+  <!-- RÉGLAGES -->
+  <section id="p-reglages" role="tabpanel" hidden>
+    <h2>Profil</h2>
+    <p class="lede">Ces infos servent aux messages, à l'IA et à la veille automatique du matin.</p>
+    <form class="stack" id="sf">
+      <div class="panel stack">
+        <div class="sec-t"><h3>Profil</h3></div>
+        <div class="row">
+          <label class="f" for="s-nom">Prénom Nom<input id="s-nom"></label>
+          <label class="f" for="s-insta">Instagram<input id="s-insta" placeholder="@…"></label>
+          <label class="f" for="s-tel">Téléphone<input id="s-tel"></label>
+        </div>
+        <div class="row">
+          <label class="f" for="s-book">Lien du book / portfolio<input id="s-book" placeholder="https://…"></label>
+          <label class="f s" for="s-ville">Ville / zone<input id="s-ville"></label>
+        </div>
+        <label class="f" for="s-refs">Références et points forts (utilisés par l'IA)<textarea id="s-refs" placeholder="ex. 3 courts-métrages, 1 clip, mariages ; beauté HD, raccords, petits effets SFX, peaux noires et métissées…"></textarea></label>
+      </div>
+      <div class="panel stack">
+        <div class="sec-t"><h3>Objectif & veille</h3></div>
+        <div class="row">
+          <label class="f s" for="s-goal">Contacts par semaine<input id="s-goal" type="number" min="1" max="100"></label>
+          <label class="f" for="s-kw">Mots-clés de la veille (séparés par des virgules)<input id="s-kw"></label>
+        </div>
+      </div>
+      <div class="row" style="justify-content:space-between;align-items:center"><span class="msg" id="sf-msg"></span><button class="btn" type="submit">Enregistrer</button></div>
+    </form>
+  </section>
+
+  <p class="foot">Les liens ouvrent les sites dans un nouvel onglet ; LinkedIn, Crew United et les groupes Facebook demandent d'être connectée. Les données sont enregistrées en ligne et partagées avec les personnes à qui tu donnes accès à cette page.</p>
+</div>
+
+<script>
+/* ===== Utilitaires ===== */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const safeUrl = u => /^https?:\/\//i.test(String(u||"")) ? String(u) : "";
+const ls = { get(k,d){ try{ const v=localStorage.getItem(k); return v===null?d:JSON.parse(v);}catch(e){return d;} }, set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} } };
+const iso = d => { const x=new Date(d); x.setMinutes(x.getMinutes()-x.getTimezoneOffset()); return x.toISOString().slice(0,10); };
+const today = () => iso(new Date());
+const addDays = (s,n) => { const d=new Date(s+"T12:00:00"); d.setDate(d.getDate()+n); return iso(d); };
+const fmt = s => s ? new Date(s+"T12:00:00").toLocaleDateString("fr-FR",{day:"numeric",month:"short"}) : "";
+const weekStart = () => { const d=new Date(); d.setDate(d.getDate()-((d.getDay()+6)%7)); return iso(d); };
+const enc = encodeURIComponent;
+
+const UNIVERS = [["cinema","Cinéma / TV"],["pub","Pub / clip"],["mode","Mode / shooting"],["mariage","Mariage"],["marque","Marque / boutique"],["autre","Autre"]];
+const UNIV_SHORT = {cinema:"Ciné/TV",pub:"Pub",mode:"Mode",mariage:"Mariage",marque:"Marque",autre:"Autre"};
+const STATUTS = [["a_contacter","À contacter"],["envoye","Envoyé"],["relance","Relancé"],["discussion","En discussion"],["booke","Booké ✓"],["refus","Pas retenu"]];
+const ROLES = [["cheffe","Cheffe maquilleuse"],["maquilleuse","Maquilleuse / renfort"],["prod","Production / régie"],["photographe","Photographe"],["agence","Agence"],["planner","Wedding planner"],["autre","Autre"]];
+const ROLE_L = Object.fromEntries(ROLES);
+const opts = (arr, sel) => arr.map(([v,l]) => `<option value="${v}" ${v===sel?"selected":""}>${l}</option>`).join("");
+["#pf-univers","#af-univers"].forEach(s => $(s).innerHTML = opts(UNIVERS,"cinema"));
+$("#puni").innerHTML += opts(UNIVERS);
+$("#pf-statut").innerHTML = opts(STATUTS,"envoye");
+$("#rf-role").innerHTML = opts(ROLES,"cheffe");
+$("#slate-date").textContent = new Date().toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short",year:"numeric"});
+
+/* ===== État ===== */
+const DEFAULT_PROFIL = { nom:"", insta:"", tel:"", book:"", ville:"Paris", refs:"", objectif:10,
+  motsCles:"maquilleuse tournage, renfort maquillage, maquilleuse pub, makeup artist shooting, maquilleuse mariage",
+  tarifs:[["Journée tournage cinéma","200–250 € brut"],["Journée tournage TV","155–180 € brut"],["Journée pub / clip",""],["Shooting mode (demi-journée)",""],["Mariée (essai + jour J)",""],["Invitée / proche",""]] };
+const S = { profil: {...DEFAULT_PROFIL, ...ls.get("fds-profil-cache",{})}, pistes:[], reseau:[], agenda:[], annonces:[], veille:null, loaded:false };
+let db = null, sample = null, canWrite = true;
+
+/* ===== Onglets ===== */
+const TABS = ["annonces","jour","chercher","pistes","reseau","agenda","messages","reglages"];
+function showTab(t){
+  if(!TABS.includes(t)) t="annonces";
+  $$("#tabs .tab").forEach(b => b.setAttribute("aria-selected", b.dataset.t===t));
+  TABS.forEach(x => $("#p-"+x).hidden = x!==t);
+  ls.set("fds-tab3", t);
+}
+$("#tabs").addEventListener("click", e => { const b=e.target.closest(".tab"); if(b) showTab(b.dataset.t); });
+document.addEventListener("click", e => { const g=e.target.closest("[data-goto]"); if(g){ showTab(g.dataset.goto); if(g.dataset.filter) setPFilter(g.dataset.filter); window.scrollTo(0,0);} });
+showTab((location.hash||"").slice(1) || ls.get("fds-tab3","annonces"));
+
+/* ===== Calculs ===== */
+const isActive = p => ["envoye","relance","discussion"].includes(p.statut);
+const isDue = p => (p.statut==="envoye"||p.statut==="relance") && p.relanceLe && p.relanceLe <= today();
+const contactsThisWeek = () => {
+  const ws = weekStart();
+  return S.pistes.filter(p => p.envoyeLe && p.envoyeLe >= ws).length
+       + S.reseau.filter(r => r.dernierContact && r.dernierContact >= ws).length;
+};
+const reseauDue = () => S.reseau.filter(r => r.prochainContact && r.prochainContact <= today());
+
+/* ===== AUJOURD'HUI ===== */
+function renderJour(){
+  const items = [];
+  S.pistes.filter(isDue).forEach(p => items.push({k:"r",kl:"Relance",t:p.nom,s:`envoyé le ${fmt(p.envoyeLe)} · ${UNIV_SHORT[p.univers]||""}`,act:`<button class="btn sm" data-relance="${esc(p.id)}" type="button">Fait</button>`}));
+  S.agenda.filter(a => a.debut >= today() && a.debut <= addDays(today(),7)).sort((a,b)=>a.debut.localeCompare(b.debut))
+    .forEach(a => items.push({k:"v",kl:a.debut===today()?"Aujourd'hui":fmt(a.debut),t:a.titre,s:[a.lieu,a.statut==="option"?"option à confirmer":""].filter(Boolean).join(" · "),act:""}));
+  const annNew = S.annonces.filter(a => (a.statut||"nouvelle")==="nouvelle");
+  if(annNew.length) items.unshift({k:"w",kl:"Annonces",t:`${annNew.length} annonce${annNew.length>1?"s":""} à Paris à regarder`,s:annNew.slice(0,3).map(a=>a.titre).join(" · "),act:`<button class="btn sm ghost" data-goto="annonces" type="button">Voir</button>`});
+  const veilleNew = S.pistes.filter(p => p.source==="veille" && p.statut==="a_contacter");
+  if(veilleNew.length) items.push({k:"w",kl:"Veille",t:`${veilleNew.length} annonce${veilleNew.length>1?"s":""} trouvée${veilleNew.length>1?"s":""} à regarder`,s:veilleNew.slice(0,3).map(p=>p.nom).join(" · "),act:`<button class="btn sm ghost" data-goto="pistes" data-filter="traiter" type="button">Voir</button>`});
+  reseauDue().forEach(r => items.push({k:"p",kl:"Réseau",t:`Donner des nouvelles à ${r.nom}`,s:ROLE_L[r.role]||"",act:`<button class="btn sm ghost" data-contacte="${esc(r.id)}" type="button">Fait</button>`}));
+  const liste = S.pistes.filter(p => p.source==="liste" && p.statut==="a_contacter");
+  if(liste.length) items.push({k:"p",kl:"Démarcher",t:`${Math.min(3,liste.length)} prods à contacter aujourd'hui`,s:liste.slice(0,3).map(p=>p.nom).join(" · "),act:`<button class="btn sm ghost" data-goto="pistes" data-filter="traiter" type="button">Ouvrir</button>`});
+
+  $("#todo-count").textContent = items.length ? `${items.length} élément${items.length>1?"s":""}` : "";
+  $("#todo").innerHTML = items.length ? items.map(i => `<div class="it"><span class="k ${i.k}">${esc(i.kl)}</span><div class="t">${esc(i.t)}${i.s?`<small>${esc(i.s)}</small>`:""}</div>${i.act}</div>`).join("")
+    : `<div class="msg" style="padding:14px 0">${S.loaded ? "Rien d'urgent. Bon moment pour ouvrir l'onglet Chercher ou démarcher une prod." : "Chargement…"}</div>`;
+  const due = S.pistes.filter(isDue).length + reseauDue().length;
+  $("#b-jour").textContent = due; $("#b-jour").hidden = !due;
+  const traiter = S.pistes.filter(p => p.statut==="a_contacter" && p.source==="veille").length;
+  $("#b-pistes").textContent = traiter; $("#b-pistes").hidden = !traiter;
+
+  const n = contactsThisWeek(), g = Math.max(1, Number(S.profil.objectif)||10);
+  $("#goal-num").innerHTML = `${n} <small>/ ${g} contacts</small>`;
+  $("#goal-bar").style.width = Math.min(100, Math.round(n/g*100)) + "%";
+  const left = Math.max(0, g-n), days = Math.max(1, 5 - ((new Date().getDay()+6)%7));
+  $("#goal-msg").textContent = left ? `Encore ${left}, soit environ ${Math.ceil(left/days)} par jour jusqu'à vendredi.` : "Objectif atteint cette semaine.";
+  $("#slate-week").textContent = `${n} / ${g} contacts`;
+
+  const rows = UNIVERS.filter(([u]) => u!=="autre").map(([u,l]) => {
+    const sent = S.pistes.filter(p => p.univers===u && p.statut!=="a_contacter");
+    const rep = sent.filter(p => ["discussion","booke"].includes(p.statut) || p.reponse).length;
+    const bk = sent.filter(p => p.statut==="booke").length;
+    const pct = sent.length ? Math.round(rep/sent.length*100) : 0;
+    return `<div class="uni"><span>${UNIV_SHORT[u]}</span><div class="bar"><i style="width:${pct}%"></i></div><span class="num">${sent.length?`${pct} % · ${bk} booké${bk>1?"s":""}`:"—"}</span></div>`;
+  }).join("");
+  const totalSent = S.pistes.filter(p => p.statut!=="a_contacter").length;
+  $("#stats").innerHTML = rows + `<p class="msg" style="margin:6px 0 0">${totalSent<10 ? "Les tendances deviennent fiables après une dizaine d'envois par univers." : "Mets plus d'énergie là où le taux est le plus haut."}</p>`;
+
+  const v = S.veille;
+  $("#veille").innerHTML = v && v.derniere
+    ? `<b>Veille du ${esc(new Date(v.derniere).toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"}))}</b> : ${Number(v.nb)||0} nouvelle${(Number(v.nb)||0)>1?"s":""} annonce${(Number(v.nb)||0)>1?"s":""}. ${esc(v.resume||"")}`
+    : "La veille automatique cherche de nouvelles annonces chaque matin de semaine vers 8 h et les ajoute aux Pistes avec l'étiquette « veille ».";
+  $("#slate-name").textContent = S.profil.nom || "—";
+}
+document.addEventListener("click", async e => {
+  const r = e.target.closest("[data-relance]");
+  if(r && db){ r.disabled = true; try{ await db.doc("pistes/"+r.dataset.relance).update({statut:"relance", relanceLe:addDays(today(),7), relances:(S.pistes.find(p=>p.id===r.dataset.relance)?.relances||0)+1}); }catch(err){ r.disabled=false; } }
+  const c = e.target.closest("[data-contacte]");
+  if(c && db){ c.disabled = true; try{ await db.doc("reseau/"+c.dataset.contacte).update({dernierContact:today(), prochainContact:addDays(today(),30)}); }catch(err){ c.disabled=false; } }
+});
+
+/* ===== CHERCHER ===== */
+const KW = ["maquilleuse","maquilleur","makeup artist","HMC","renfort maquillage","coiffure maquillage"];
+const Q = { period: ls.get("fds-period","w"), kw: ls.get("fds-kw",["maquilleuse","makeup artist"]) };
+const ville = () => "Paris";
+const kwOr = () => "(" + (Q.kw.length?Q.kw:["maquilleuse"]).map(x=>`"${x}"`).join(" OR ") + ")";
+const firstKw = () => Q.kw[0] || "maquilleuse";
+const google = (q, maps) => maps ? `https://www.google.com/maps/search/${enc(q)}` : `https://www.google.com/search?q=${enc(q)}${Q.period?"&tbs=qdr:"+Q.period:""}`;
+const indeed = q => `https://fr.indeed.com/jobs?q=${enc(q)}&l=${enc(ville())}${({d:1,w:7,m:14})[Q.period]?"&fromage="+({d:1,w:7,m:14})[Q.period]:""}`;
+const liJobs = q => `https://www.linkedin.com/jobs/search/?keywords=${enc(q)}&location=${enc(ville())}${({d:"r86400",w:"r604800",m:"r2592000"})[Q.period]?"&f_TPR="+({d:"r86400",w:"r604800",m:"r2592000"})[Q.period]:""}`;
+const liPosts = q => `https://www.linkedin.com/search/results/content/?keywords=${enc(q)}${({d:"past-24h",w:"past-week",m:"past-month"})[Q.period]?"&datePosted=%22"+({d:"past-24h",w:"past-week",m:"past-month"})[Q.period]+"%22":""}`;
+const ft = q => `https://candidat.francetravail.fr/offres/recherche?motsCles=${enc(q)}`;
+const DEPTS = [
+  { title:"Cinéma · TV", prio:"Priorité 1", tip:"Sur un tournage, on se fait embaucher par la cheffe maquilleuse ou la régie. Repère les tournages à venir, puis envoie CV + book à la production. Et ajoute les cheffes à l'onglet Réseau.",
+    s:() => [
+      ["Annonces récentes sur le web",`Tournages qui cherchent une maquilleuse · ${ville()}`,google(`${kwOr()} (tournage OR "long-métrage" OR série OR "court-métrage") recherche ${ville()}`)],
+      ["Crew United","Tournages à venir + offres techniciens","https://www.crew-united.com/fr/"],
+      ["Annonces Nikon Film Festival","Courts-métrages qui cherchent une maquilleuse, filtre Paris","https://www.festivalnikon.fr/annonces"],
+      ["Crew United via Google","Offres maquillage indexées",google(`site:crew-united.com (maquilleuse OR maquilleur OR "makeup")`)],
+      ["Groupes Facebook tournage","Les renforts de dernière minute passent là",google(`site:facebook.com/groups (tournage OR technicien) ${kwOr()} ${ville()}`)],
+      ["Profilculture","Offres spectacle & audiovisuel",google(`site:profilculture.com ${kwOr()}`)],
+      ["France Travail · spectacle","Offres « maquilleur spectacle »",ft("maquilleur spectacle")],
+      ["Indeed",`« ${firstKw()} cinéma » · ${ville()}`,indeed(`${firstKw()} cinéma`)],
+    ]},
+  { title:"Publicité · clips", prio:"Priorité 1", tip:"En pub, les équipes se montent en quelques jours via les prods et les agences d'artistes. Les prods de la liste (onglet Pistes) sont à démarcher au rythme de 3 par jour.",
+    s:() => [
+      ["Posts LinkedIn","« recherche maquilleuse tournage pub »",liPosts("recherche maquilleuse tournage pub")],
+      ["Offres LinkedIn",`« ${firstKw()} » · ${ville()}`,liJobs(firstKw())],
+      ["Annonces récentes sur le web","Pub, clip, film corporate",google(`${kwOr()} (pub OR publicité OR clip OR "film corporate") tournage ${ville()}`)],
+      ["Agences d'artistes HMC","Agences qui représentent des maquilleuses",google(`site:models.com agency ${ville()} hair makeup`)],
+      ["Groupes Facebook clips","Clips & petits budgets pour le book",google(`site:facebook.com/groups clip tournage ${kwOr()}`)],
+    ]},
+  { title:"Insta · Threads · Facebook", prio:"Chaque jour", tip:"Les annonces Insta passent surtout en stories et dans les hashtags. Ces liens s'ouvrent dans l'app si tu es connectée. Repère une annonce ? Colle-la dans l'onglet Annonces.",
+    s:() => [
+      ["#castingparis","Tournages, clips et pubs qui recrutent","https://www.instagram.com/explore/tags/castingparis/"],
+      ["#tournageparis","Équipes en préparation","https://www.instagram.com/explore/tags/tournageparis/"],
+      ["#courtmetrageparis","Courts-métrages qui montent leur équipe","https://www.instagram.com/explore/tags/courtmetrageparis/"],
+      ["#shootingparis","Photographes et marques","https://www.instagram.com/explore/tags/shootingparis/"],
+      ["#tfpparis","Collabs pour nourrir le book","https://www.instagram.com/explore/tags/tfpparis/"],
+      ["Threads : « recherche maquilleuse Paris »","Posts récents sur Threads","https://www.threads.net/search?q="+enc("recherche maquilleuse paris")],
+      ["Threads : « cherche MUA tournage »","Tournages, clips, shootings","https://www.threads.net/search?q="+enc("cherche MUA tournage paris")],
+      ["Groupes Facebook techniciens Paris","Groupes à rejoindre (annonces de renfort)","https://www.facebook.com/search/groups/?q="+enc("techniciens cinéma Paris")],
+      ["Posts Insta indexés par Google","« recherche maquilleuse » à Paris",google(`site:instagram.com ("recherche maquilleuse" OR "cherche maquilleuse" OR "cherche MUA" OR "recherche MUA") Paris`)],
+    ]},
+  { title:"Mode · shooting", prio:"Priorité 2", low:true, tip:"Les collabs avec des photographes nourrissent le book qui ouvre les portes de la pub. Fashion Week = beaucoup de renforts backstage.",
+    s:() => [
+      ["Annonces shooting","Photographes et marques qui cherchent une MUA",google(`${kwOr()} shooting (recherche OR cherche) ${ville()}`)],
+      ["Backstage défilés","Équipes de renfort Fashion Week",google(`fashion week backstage ${kwOr()} recrutement`)],
+      ["Instagram via Google","Posts « recherche MUA »",google(`site:instagram.com (recherche OR cherche) (MUA OR maquilleuse) shooting ${ville()}`)],
+      ["Groupes Facebook shooting","Collabs photographe / modèle / MUA",google(`site:facebook.com/groups shooting photo ${kwOr()} ${ville()}`)],
+      ["Indeed",`« makeup artist » · ${ville()}`,indeed("makeup artist")],
+    ]},
+  { title:"Mariage", prio:"Priorité 3", low:true, tip:"Ici on se fait recommander : wedding planners et lieux de réception sont les meilleurs apporteurs. Ajoute-les à l'onglet Réseau.",
+    s:() => [
+      ["Wedding planners",`Sur la carte · ${ville()}`,google(`wedding planner ${ville()}`,true)],
+      ["Lieux de réception",`Domaines & salles · ${ville()}`,google(`lieu de réception mariage ${ville()}`,true)],
+      ["Salons du mariage","Dates et inscriptions exposants",google(`salon du mariage ${new Date().getFullYear()+1} ${ville()} exposant`)],
+      ["Groupes Facebook mariées","Futures mariées qui cherchent une MUA",google(`site:facebook.com/groups mariage ${ville()} maquilleuse`)],
+      ["Mariages.net","Annuaire prestataires (fiche pro)","https://www.mariages.net/"],
+    ]},
+];
+function renderChercher(){
+  $$("#q-period button").forEach(b => b.setAttribute("aria-pressed", b.dataset.v===Q.period));
+  $("#q-kw").innerHTML = KW.map(k => `<button type="button" class="chip" aria-pressed="${Q.kw.includes(k)}" data-k="${esc(k)}">${esc(k)}</button>`).join("");
+  $("#depts").innerHTML = DEPTS.map(d => `<article class="panel dept"><header><h3>${d.title}</h3><span class="prio ${d.low?"b":""}">${d.prio}</span></header><p class="tip">${esc(d.tip)}</p>${d.s().map(([t,s,u]) => `<a class="src" href="${esc(u)}" target="_blank" rel="noopener"><b>${esc(t)}</b><span>${esc(s)}</span><i>ouvrir ↗</i></a>`).join("")}</article>`).join("");
+  $("#rs-crew").href = google(`site:crew-united.com ("chef maquilleuse" OR "cheffe maquilleuse" OR "chef maquilleur") ${ville()}`);
+  $("#rs-insta").href = google(`site:instagram.com ("cheffe maquilleuse" OR "chef maquilleuse" OR "key makeup artist") ${ville()}`);
+  $("#rs-li").href = `https://www.linkedin.com/search/results/people/?keywords=${enc("chef maquilleur cinéma")}`;
+}
+$("#q-kw").addEventListener("click", e => { const b=e.target.closest(".chip"); if(!b) return; const k=b.dataset.k; Q.kw = Q.kw.includes(k)?Q.kw.filter(x=>x!==k):[...Q.kw,k]; ls.set("fds-kw",Q.kw); renderChercher(); });
+$("#q-period").addEventListener("click", e => { const b=e.target.closest("button"); if(!b) return; Q.period=b.dataset.v; ls.set("fds-period",Q.period); renderChercher(); });
+let vT; $("#q-ville").addEventListener("input", e => { clearTimeout(vT); vT=setTimeout(()=>{ S.profil.ville = e.target.value.trim()||"Paris"; renderChercher(); renderMessages(); saveProfil(true); }, 600); });
+
+/* ===== PISTES ===== */
+let pfilter = "traiter", editId = null;
+function setPFilter(v){ pfilter=v; $$("#pfilter button").forEach(b => b.setAttribute("aria-pressed", b.dataset.v===v)); renderPistes(); }
+$("#pfilter").addEventListener("click", e => { const b=e.target.closest("button"); if(b) setPFilter(b.dataset.v); });
+$("#puni").addEventListener("change", renderPistes);
+$("#pq").addEventListener("input", renderPistes);
+
+function renderPistes(){
+  const keep = {};
+  $$("#plist .card").forEach(c => { const s=c.querySelector("[data-slot]"); if(s && !s.hidden) keep[c.dataset.id] = s; });
+  renderPistesInner();
+  Object.entries(keep).forEach(([id,s]) => { const c=[...$$("#plist .card")].find(x=>x.dataset.id===id); if(c) c.querySelector("[data-slot]").replaceWith(s); });
+}
+function renderPistesInner(){
+  let rows = S.pistes.slice();
+  if(pfilter==="traiter") rows = rows.filter(p => p.statut==="a_contacter" || isDue(p));
+  else if(pfilter==="cours") rows = rows.filter(isActive);
+  else if(pfilter==="booke") rows = rows.filter(p => p.statut==="booke");
+  const u = $("#puni").value; if(u) rows = rows.filter(p => p.univers===u);
+  const q = $("#pq").value.trim().toLowerCase(); if(q) rows = rows.filter(p => [p.nom,p.contact,p.notes].join(" ").toLowerCase().includes(q));
+  const rank = p => isDue(p) ? 0 : p.source==="veille" && p.statut==="a_contacter" ? 1 : p.source==="liste" ? 3 : 2;
+  rows.sort((a,b) => rank(a)-rank(b) || String(b.creeLe||"").localeCompare(String(a.creeLe||"")));
+  if(!rows.length){ $("#plist").innerHTML = `<div class="empty">${!S.loaded?"Chargement…":S.pistes.length?"Rien dans ce filtre.":"Aucune piste. Colle une annonce ci-dessus pour commencer."}</div>`; return; }
+  $("#plist").innerHTML = rows.map(p => {
+    const due = isDue(p), lien = safeUrl(p.lien);
+    return `<article class="card ${due?"due":""} st-${esc(p.statut)}" data-id="${esc(p.id)}">
+      <h4>${p.source==="veille"&&p.statut==="a_contacter"?'<span class="tag new">veille</span> ':p.source==="liste"?'<span class="tag">liste</span> ':""}${esc(p.nom)}</h4>
+      <div class="actions">
+        <select data-act="statut" aria-label="Statut" ${canWrite?"":"disabled"}>${opts(STATUTS,p.statut)}</select>
+      </div>
+      <div class="meta">
+        <span class="pill u-${esc(p.univers)}">${esc(UNIV_SHORT[p.univers]||p.univers)}</span>
+        ${p.contact?`<span>${esc(p.contact)}</span>`:""}
+        ${p.dates?`<span class="m">${esc(p.dates)}</span>`:""}
+        ${p.tarif?`<span class="m">${esc(p.tarif)}</span>`:""}
+        ${p.envoyeLe?`<span class="m">envoyé ${fmt(p.envoyeLe)}</span>`:""}
+        ${(p.statut==="envoye"||p.statut==="relance")&&p.relanceLe?`<span class="m ${due?"flag":""}">${due?"relancer maintenant":"relance "+fmt(p.relanceLe)}</span>`:""}
+        ${lien?`<a href="${esc(lien)}" target="_blank" rel="noopener">${p.source==="liste"?"trouver le contact":"annonce"} ↗</a>`:""}
+      </div>
+      ${p.notes?`<p class="notes">${esc(p.notes)}</p>`:""}
+      <div class="sub actions" style="justify-content:flex-start">
+        ${sample?`<button class="btn sm acc" data-act="write" type="button">${due?"Écrire la relance":"Écrire le message"}</button>`:""}
+        ${canWrite && p.statut==="a_contacter"?`<button class="btn sm" data-act="sent" type="button">C'est envoyé ✓</button>`:""}
+        ${canWrite && due?`<button class="btn sm" data-act="resent" type="button">Relance envoyée ✓</button>`:""}
+        ${p.statut==="booke"?`<button class="btn sm ghost" data-act="agenda" type="button">→ Agenda</button>`:""}
+        ${canWrite?`<button class="btn sm ghost" data-act="edit" type="button">Modifier</button><button class="btn sm ghost" data-act="del" type="button">Supprimer</button>`:""}
+      </div>
+      <div class="sub" data-slot hidden></div>
+    </article>`;
+  }).join("");
+}
+
+function openPF(p){
+  editId = p?.id || null;
+  $("#pf-title").textContent = editId ? "Modifier la piste" : "Nouvelle piste";
+  $("#pf-nom").value = p?.nom||""; $("#pf-univers").value = p?.univers||"cinema"; $("#pf-contact").value = p?.contact||"";
+  $("#pf-lien").value = p?.lien||""; $("#pf-statut").value = p?.statut|| (editId?"a_contacter":"envoye");
+  $("#pf-envoi").value = p?.envoyeLe || (editId?"":today()); $("#pf-dates").value = p?.dates||""; $("#pf-tarif").value = p?.tarif||""; $("#pf-notes").value = p?.notes||"";
+  $("#pf-msg").textContent = ""; $("#pf").hidden = false; $("#pf-nom").focus();
+}
+$("#open-add").addEventListener("click", () => openPF(null));
+$("#pf-cancel").addEventListener("click", () => { $("#pf").hidden = true; editId = null; });
+$("#pf").addEventListener("submit", async e => {
+  e.preventDefault(); if(!db){ $("#pf-msg").textContent = "Enregistrement indisponible ici."; return; }
+  const statut = $("#pf-statut").value;
+  const envoyeLe = statut==="a_contacter" ? "" : ($("#pf-envoi").value || today());
+  const base = editId ? {...S.pistes.find(p=>p.id===editId)} : { creeLe:new Date().toISOString(), source:"manuel" };
+  delete base.id;
+  const data = {...base, nom:$("#pf-nom").value.trim(), univers:$("#pf-univers").value, contact:$("#pf-contact").value.trim(), lien:$("#pf-lien").value.trim(),
+    statut, envoyeLe, dates:$("#pf-dates").value.trim(), tarif:$("#pf-tarif").value.trim(), notes:$("#pf-notes").value.trim()};
+  if(envoyeLe && (!base.relanceLe || base.envoyeLe!==envoyeLe)) data.relanceLe = addDays(envoyeLe,7);
+  if(!envoyeLe) data.relanceLe = "";
+  $("#pf-save").disabled = true;
+  try{
+    if(editId) await db.doc("pistes/"+editId).set(data); else await db.collection("pistes").add(data);
+    $("#pf").hidden = true; editId = null; $("#paste").value = ""; $("#paste-out").hidden = true;
+  }catch(err){ $("#pf-msg").textContent = writeErr(err); }
+  finally{ $("#pf-save").disabled = false; }
+});
+
+$("#plist").addEventListener("change", async e => {
+  const sel = e.target.closest('[data-act="statut"]'); if(!sel || !db) return;
+  const id = sel.closest(".card").dataset.id, p = S.pistes.find(x=>x.id===id); if(!p) return;
+  const st = sel.value, patch = {statut:st};
+  if(st==="envoye" && !p.envoyeLe){ patch.envoyeLe = today(); patch.relanceLe = addDays(today(),7); }
+  if(st==="relance"){ patch.relanceLe = addDays(today(),7); patch.relances = (p.relances||0)+1; if(!p.envoyeLe) patch.envoyeLe = today(); }
+  if(["discussion","booke"].includes(st)) patch.reponse = true;
+  try{ await db.doc("pistes/"+id).update(patch); }catch(err){ sel.value = p.statut; }
+});
+$("#plist").addEventListener("click", async e => {
+  const card = e.target.closest(".card"); if(!card) return;
+  const id = card.dataset.id, p = S.pistes.find(x=>x.id===id), slot = card.querySelector("[data-slot]");
+  const act = e.target.closest("[data-act]")?.dataset.act; if(!act || act==="statut") return;
+  if(act==="edit"){ openPF(p); window.scrollTo({top:$("#pf").offsetTop-10}); }
+  if(act==="del"){ slot.hidden=false; slot.innerHTML = `<span class="msg">Supprimer définitivement ?</span> <button class="btn danger sm" data-act="del-yes" type="button">Oui</button> <button class="btn ghost sm" data-act="close" type="button">Non</button>`; }
+  if(act==="close"){ slot.hidden = true; slot.innerHTML = ""; }
+  if(act==="del-yes" && db){ try{ await db.doc("pistes/"+id).delete(); }catch(err){ slot.innerHTML = `<span class="msg err">${writeErr(err)}</span>`; } }
+  if(act==="agenda"){ showTab("agenda"); $("#af-titre").value = p.nom; $("#af-univers").value = p.univers||"cinema"; $("#af-tarif").value = p.tarif||""; $("#af-debut").focus(); }
+  if(act==="write") writeFor(p, slot);
+  if(act==="copy"){ copyText(slot.querySelector(".out"), e.target); }
+  if((act==="sent" || act==="resent") && db){
+    const btn = e.target.closest("[data-act]"); btn.disabled = true;
+    const patch = act==="sent"
+      ? { statut:"envoye", envoyeLe:today(), relanceLe:addDays(today(),7) }
+      : { statut:"relance", relanceLe:addDays(today(),7), relances:(p.relances||0)+1 };
+    slot.hidden = true;
+    try{ await db.doc("pistes/"+id).update(patch); }
+    catch(err){ btn.disabled = false; slot.hidden = false; slot.innerHTML = `<span class="msg err">${writeErr(err)}</span>`; }
+  }
+});
+
+/* ===== IA (sample) ===== */
+function profilText(){
+  const p = S.profil;
+  return `Maquilleuse professionnelle : ${p.nom||"(nom non renseigné)"}, basée à ${ville()}.
+Références et points forts : ${p.refs||"non renseignés"}.
+Book : ${p.book||"[lien du book]"} · Instagram : ${p.insta||"[@instagram]"} · Tél : ${p.tel||"[téléphone]"}.
+Priorités : cinéma et pub d'abord, puis mode/shooting, puis mariage.`;
+}
+function sampleErr(e){
+  return ({not_granted:"L'IA n'a pas été autorisée pour cette page.",rate_limited:"Trop de demandes d'un coup, réessaie dans un moment.",refused:"Claude n'a pas pu traiter ce texte.",invalid_json:"Réponse illisible, réessaie.",sampling_disabled:"L'IA n'est pas disponible sur ce compte."})[e?.code] || "Ça n'a pas marché, réessaie.";
+}
+let pasteCtl;
+$("#paste-go").addEventListener("click", async () => {
+  const txt = $("#paste").value.trim();
+  if(!txt){ $("#paste-msg").textContent = "Colle d'abord le texte d'une annonce."; return; }
+  if(!sample){ openPF(null); $("#pf-notes").value = txt.slice(0,2000); $("#paste-msg").textContent = "L'analyse automatique n'est pas disponible ici : complète la fiche à la main."; return; }
+  $("#paste-go").disabled = true; $("#paste-msg").textContent = "Lecture de l'annonce…"; $("#paste-out").hidden = true;
+  pasteCtl = new AbortController();
+  try{
+    const r = await sample.json(`Tu aides une maquilleuse professionnelle à répondre à des annonces.
+${profilText()}
+
+Voici une annonce copiée telle quelle :
+"""
+${txt.slice(0,6000)}
+"""
+
+Réponds uniquement avec un objet JSON :
+{"nom": "qui publie / quel projet, court", "univers": "cinema|pub|mode|mariage|autre", "contact": "email, téléphone ou compte à contacter, sinon vide", "lien": "URL si présente, sinon vide", "dates": "dates de mission si présentes", "tarif": "tarif si présent", "resume": "1 phrase : ce qui est demandé", "pertinence": "1 phrase honnête : est-ce une bonne piste pour elle et pourquoi", "objet": "objet de mail court", "message": "message de candidature en français, chaleureux et pro, 90 à 150 mots, adapté précisément à l'annonce, qui cite 1 ou 2 de ses références pertinentes, avec book et contact à la fin. Si une info manque, mets-la entre crochets."}`, { signal: pasteCtl.signal });
+    openPF(null);
+    $("#pf-nom").value = r.nom || ""; $("#pf-univers").value = UNIVERS.some(([u])=>u===r.univers) ? r.univers : "autre";
+    $("#pf-contact").value = r.contact || ""; $("#pf-lien").value = safeUrl(r.lien); $("#pf-dates").value = r.dates || ""; $("#pf-tarif").value = r.tarif || "";
+    $("#pf-notes").value = [r.resume, r.pertinence].filter(Boolean).join("\n");
+    $("#pf-statut").value = "a_contacter"; $("#pf-envoi").value = "";
+    const full = (r.objet ? "Objet : "+r.objet+"\n\n" : "") + (r.message || "");
+    $("#paste-out").hidden = false;
+    $("#paste-out").innerHTML = `<div class="lab">Message proposé</div><div class="out" id="paste-text"></div><div class="actions" style="justify-content:flex-start"><button class="btn sm" type="button" id="paste-copy">Copier le message</button><button class="btn sm acc" type="button" id="paste-sent">C'est envoyé ✓</button><span class="msg">Ou enregistre la fiche pour l'envoyer plus tard.</span></div>`;
+    $("#paste-sent").onclick = () => { $("#pf-statut").value = "envoye"; $("#pf-envoi").value = today(); $("#pf").requestSubmit(); };
+    $("#paste-text").textContent = full;
+    $("#paste-copy").onclick = e => copyText($("#paste-text"), e.target);
+    $("#paste-msg").textContent = "Fiche remplie ci-dessous : vérifie, puis enregistre.";
+  }catch(e){ $("#paste-msg").textContent = e?.code==="cancelled" ? "" : sampleErr(e); }
+  finally{ $("#paste-go").disabled = false; }
+});
+async function writeFor(p, slot){
+  slot.hidden = false;
+  const sentBtn = isDue(p) ? `<button class="btn sm acc" data-act="resent" type="button">Relance envoyée ✓</button>`
+    : p.statut==="a_contacter" ? `<button class="btn sm acc" data-act="sent" type="button">C'est envoyé ✓</button>` : "";
+  slot.innerHTML = `<div class="out">Rédaction…</div><div class="actions" style="justify-content:flex-start"><button class="btn sm" data-act="copy" type="button" disabled>Copier</button>${canWrite?sentBtn:""}<button class="btn sm ghost" data-act="close" type="button">Fermer</button></div>`;
+  const out = slot.querySelector(".out"), copyBtn = slot.querySelector('[data-act="copy"]');
+  const kind = isDue(p) ? "une RELANCE courte (50 à 80 mots), polie, qui rappelle la candidature envoyée le "+fmt(p.envoyeLe)
+    : p.source==="liste" ? "un mail de DÉMARCHAGE spontané (80 à 120 mots) à une société de production / agence, pour se faire connaître et être appelée sur leurs prochains tournages"
+    : "un message de CANDIDATURE (90 à 150 mots) adapté à cette piste";
+  try{
+    await sample(`Tu aides une maquilleuse professionnelle à décrocher des missions.
+${profilText()}
+
+Piste : ${p.nom}
+Univers : ${UNIV_SHORT[p.univers]||p.univers}
+Contact : ${p.contact||"inconnu"}
+Dates : ${p.dates||"—"} · Tarif : ${p.tarif||"—"}
+Notes : ${p.notes||"—"}
+
+Écris ${kind}. En français, ton chaleureux et pro, sans flatterie excessive. Commence par "Objet : ..." sur une ligne, puis une ligne vide, puis le message. Termine par sa signature (nom, téléphone, book, Instagram). Mets entre crochets ce qu'elle doit compléter. Aucun autre texte.`,
+      { cache:false, onText: ({text}) => { out.textContent = text; } });
+    copyBtn.disabled = false;
+  }catch(e){ out.textContent = e?.text || sampleErr(e); }
+}
+async function copyText(el, btn){
+  try{ await navigator.clipboard.writeText(el.textContent); const o=btn.textContent; btn.textContent="Copié"; setTimeout(()=>btn.textContent=o,1800); }
+  catch(err){ const r=document.createRange(); r.selectNodeContents(el); const s=getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent="Sélectionné : fais Copier"; }
+}
+const writeErr = err => err?.code==="quota_exceeded" ? "La base est pleine : supprime d'anciennes fiches." : err?.code==="invalid_argument" ? "Tu n'as que l'accès en lecture à cette page." : "Pas pu enregistrer, réessaie dans un instant.";
+
+/* ===== RÉSEAU ===== */
+let rfilter = "";
+function renderReseau(){
+  const roles = [["","Tous"],...ROLES.filter(([r]) => S.reseau.some(x=>x.role===r))];
+  $("#rfilter").innerHTML = roles.map(([v,l]) => `<button type="button" data-v="${v}" aria-pressed="${v===rfilter}">${l}</button>`).join("");
+  let rows = S.reseau.filter(r => !rfilter || r.role===rfilter);
+  rows.sort((a,b) => String(a.prochainContact||"9").localeCompare(String(b.prochainContact||"9")));
+  if(!rows.length){ $("#rlist").innerHTML = `<div class="empty">${S.loaded?"Personne pour l'instant. Commence par 5 cheffes maquilleuses repérées sur des tournages récents.":"Chargement…"}</div>`; return; }
+  const HEAT = {froid:"pas encore contacté·e",tiede:"échange en cours",chaud:"a déjà fait appel à elle"};
+  $("#rlist").innerHTML = rows.map(r => {
+    const due = r.prochainContact && r.prochainContact <= today();
+    return `<article class="card ${due?"due":""}" data-id="${esc(r.id)}">
+      <h4>${esc(r.nom)}</h4>
+      <div class="actions">${canWrite?`<button class="btn sm ${due?"":"ghost"}" data-contacte="${esc(r.id)}" type="button">Contacté·e aujourd'hui</button><button class="btn sm ghost" data-rdel type="button">Retirer</button>`:""}</div>
+      <div class="meta">
+        <span class="pill u-autre">${esc(ROLE_L[r.role]||r.role)}</span>
+        <span class="pill heat-${esc(r.chaleur||"froid")}">${esc(HEAT[r.chaleur]||"")}</span>
+        ${r.contact?`<span>${esc(r.contact)}</span>`:""}
+        ${r.ou?`<span>vu·e sur ${esc(r.ou)}</span>`:""}
+        ${r.dernierContact?`<span class="m">dernier contact ${fmt(r.dernierContact)}</span>`:""}
+        ${r.prochainContact?`<span class="m ${due?"flag":""}">${due?"à recontacter":"prochain "+fmt(r.prochainContact)}</span>`:""}
+      </div>
+      <div class="sub" data-slot hidden></div>
+    </article>`; }).join("");
+}
+$("#rfilter").addEventListener("click", e => { const b=e.target.closest("button"); if(b){ rfilter=b.dataset.v; renderReseau(); } });
+$("#rf").addEventListener("submit", async e => {
+  e.preventDefault(); if(!db){ $("#rf-msg").textContent="Enregistrement indisponible ici."; return; }
+  const heat = $("#rf-heat").value;
+  try{
+    await db.collection("reseau").add({ nom:$("#rf-nom").value.trim(), role:$("#rf-role").value, contact:$("#rf-contact").value.trim(), ou:$("#rf-ou").value.trim(),
+      chaleur:heat, dernierContact: heat==="froid"?"":today(), prochainContact: heat==="froid"?today():addDays(today(),30), creeLe:new Date().toISOString() });
+    $("#rf").reset(); $("#rf-msg").textContent = "Ajouté·e.";
+  }catch(err){ $("#rf-msg").textContent = writeErr(err); }
+});
+$("#rlist").addEventListener("click", async e => {
+  const card = e.target.closest(".card"); if(!card) return; const slot = card.querySelector("[data-slot]");
+  if(e.target.closest("[data-rdel]")){ slot.hidden=false; slot.innerHTML=`<span class="msg">Retirer de la liste ?</span> <button class="btn danger sm" data-ryes type="button">Oui</button> <button class="btn ghost sm" data-rno type="button">Non</button>`; }
+  if(e.target.closest("[data-rno]")){ slot.hidden=true; }
+  if(e.target.closest("[data-ryes]") && db){ try{ await db.doc("reseau/"+card.dataset.id).delete(); }catch(err){ slot.innerHTML=`<span class="msg err">${writeErr(err)}</span>`; } }
+});
+
+/* ===== AGENDA ===== */
+function overlaps(d1,f1,d2,f2){ return d1 <= (f2||d2) && d2 <= (f1||d1); }
+function renderAgenda(){
+  const up = S.agenda.filter(a => (a.fin||a.debut) >= today()).sort((a,b)=>a.debut.localeCompare(b.debut));
+  const past = S.agenda.length - up.length;
+  if(!up.length){ $("#alist").innerHTML = `<div class="empty">${S.loaded?"Aucune mission à venir. Quand une piste passe en « Booké », le bouton « → Agenda » la reporte ici.":"Chargement…"}</div>${past?`<p class="msg">${past} mission${past>1?"s":""} passée${past>1?"s":""}.</p>`:""}`; return; }
+  let html = "", month = "";
+  up.forEach(a => {
+    const m = new Date(a.debut+"T12:00:00").toLocaleDateString("fr-FR",{month:"long",year:"numeric"});
+    if(m!==month){ html += `<div class="month">${esc(m)}</div>`; month = m; }
+    const clash = up.some(b => b!==a && b.statut==="confirme" && overlaps(a.debut,a.fin,b.debut,b.fin));
+    html += `<article class="card" data-id="${esc(a.id)}" style="margin-bottom:8px">
+      <h4>${esc(a.titre)}</h4>
+      <div class="actions">${canWrite?`<button class="btn sm ghost" data-adel type="button">Retirer</button>`:""}</div>
+      <div class="meta">
+        <span class="m">${fmt(a.debut)}${a.fin&&a.fin!==a.debut?" → "+fmt(a.fin):""}</span>
+        <span class="pill ${a.statut==="option"?"ag-opt":"ag-ok"}">${a.statut==="option"?"option":"confirmé"}</span>
+        <span class="pill u-${esc(a.univers)}">${esc(UNIV_SHORT[a.univers]||"")}</span>
+        ${a.tarif?`<span class="m">${esc(a.tarif)}</span>`:""}${a.lieu?`<span>${esc(a.lieu)}</span>`:""}
+        ${clash?`<span class="flag">chevauche une autre mission</span>`:""}
+      </div><div class="sub" data-slot hidden></div></article>`;
+  });
+  $("#alist").innerHTML = html + (past?`<p class="msg">${past} mission${past>1?"s":""} passée${past>1?"s":""}.</p>`:"");
+}
+$("#af").addEventListener("submit", async e => {
+  e.preventDefault(); if(!db){ $("#af-msg").textContent="Enregistrement indisponible ici."; return; }
+  const d = $("#af-debut").value, f = $("#af-fin").value || "";
+  const clash = S.agenda.find(b => b.statut==="confirme" && overlaps(d,f,b.debut,b.fin));
+  try{
+    await db.collection("agenda").add({ titre:$("#af-titre").value.trim(), univers:$("#af-univers").value, statut:$("#af-statut").value, debut:d, fin:f, tarif:$("#af-tarif").value.trim(), lieu:$("#af-lieu").value.trim(), creeLe:new Date().toISOString() });
+    $("#af").reset(); $("#af-msg").textContent = clash ? `Ajouté, mais attention : chevauche « ${clash.titre} ».` : "Ajouté.";
+  }catch(err){ $("#af-msg").textContent = writeErr(err); }
+});
+$("#alist").addEventListener("click", async e => {
+  const card = e.target.closest(".card"); if(!card) return; const slot = card.querySelector("[data-slot]");
+  if(e.target.closest("[data-adel]")){ slot.hidden=false; slot.innerHTML=`<span class="msg">Retirer cette mission ?</span> <button class="btn danger sm" data-ayes type="button">Oui</button> <button class="btn ghost sm" data-ano type="button">Non</button>`; }
+  if(e.target.closest("[data-ano]")) slot.hidden = true;
+  if(e.target.closest("[data-ayes]") && db){ try{ await db.doc("agenda/"+card.dataset.id).delete(); }catch(err){ slot.innerHTML=`<span class="msg err">${writeErr(err)}</span>`; } }
+});
+
+/* ===== MESSAGES ===== */
+const TPLS = [
+  { t:"Candidature tournage (cinéma / série)", w:"À la production ou à la cheffe maquilleuse dès qu'un tournage est annoncé", s:"Candidature maquillage – [Titre du film]",
+    b:`Bonjour [Prénom / Madame, Monsieur],
+
+J'ai appris que le tournage de [Titre] se prépare pour [mois / dates]. Je suis maquilleuse professionnelle basée à {ville} et je serais ravie de rejoindre l'équipe maquillage, en renfort ou sur toute la durée selon vos besoins.
+
+J'ai travaillé sur [1 ou 2 références] et je suis à l'aise avec [beauté HD, raccords, petits effets…].
+
+Book : {book}
+Instagram : {insta}
+
+Disponible pour un échange ou un essai.
+Belle journée,
+{nom}
+{tel}` },
+  { t:"Démarchage société de prod pub", w:"Mail court à la direction de production", s:"Maquilleuse dispo – pub & clips",
+    b:`Bonjour [Prénom],
+
+Je suis maquilleuse à {ville}, spécialisée beauté caméra pour la pub et le clip. Je vous écris pour que vous ayez mon contact pour vos prochains tournages, même en dernière minute.
+
+Quelques réalisations : {book}
+
+Je me déplace avec mon matériel complet et je suis disponible [en semaine / week-ends / dès maintenant].
+
+Merci, et à bientôt peut-être sur un plateau,
+{nom} · {tel} · {insta}` },
+  { t:"Prise de contact avec une cheffe maquilleuse", w:"Le message qui ouvre les portes des tournages ; court et sans pression", s:"Renfort maquillage – {nom}",
+    b:`Bonjour [Prénom],
+
+J'ai beaucoup aimé votre travail sur [film / série]. Je suis maquilleuse à {ville} et je cherche à faire des renforts sur des tournages pour apprendre aux côtés d'équipes comme la vôtre.
+
+Je suis rigoureuse sur les raccords et disponible rapidement. Mon book : {book}
+
+Si un jour vous cherchez un renfort, je serais ravie de venir.
+Belle journée,
+{nom} · {tel}` },
+  { t:"Collab avec un·e photographe", w:"DM Instagram, pour nourrir le book", s:"",
+    b:`Bonjour [Prénom] ! J'adore ton travail, surtout [série / shooting précis].
+
+Je suis maquilleuse à {ville} et j'aimerais beaucoup collaborer sur un prochain shooting [éditorial / beauté / mode], en TFP ou rémunéré selon le projet.
+
+Mon travail : {insta} · {book}
+
+Si tu as une idée en tête, je suis partante pour en parler !
+{nom}` },
+  { t:"Partenariat wedding planner / lieu", w:"Pour devenir la maquilleuse recommandée", s:"Proposition de partenariat – maquillage mariée",
+    b:`Bonjour [Prénom],
+
+Je suis maquilleuse professionnelle à {ville}, issue du cinéma et de la pub : mes maquillages tiennent toute la journée, photos et émotions comprises.
+
+Je serais ravie de faire partie de vos prestataires recommandés. Je peux vous proposer [un essai offert pour une de vos mariées / une rencontre].
+
+Book : {book} · {insta}
+
+Au plaisir d'échanger,
+{nom} · {tel}` },
+  { t:"Relance (7 jours après)", w:"Quand « Aujourd'hui » indique une relance", s:"Re : [objet du premier mail]",
+    b:`Bonjour [Prénom],
+
+Je me permets de revenir vers vous au sujet de ma candidature pour [projet]. Je suis toujours disponible sur [dates] et serais heureuse d'en discuter.
+
+Mon book : {book}
+
+Belle journée,
+{nom} · {tel}` },
+  { t:"Après une mission : garder le lien", w:"Le lendemain d'un tournage ; c'est comme ça qu'on est rappelée", s:"Merci pour [projet]",
+    b:`Bonjour [Prénom],
+
+Merci encore pour [projet], j'ai adoré travailler avec l'équipe. Si vous avez d'autres tournages ou si vous connaissez quelqu'un qui cherche une maquilleuse, je suis disponible à partir du [date].
+
+Et si vous avez deux minutes, une petite recommandation sur LinkedIn ou Instagram m'aiderait beaucoup.
+
+À très vite j'espère,
+{nom} · {tel}` },
+];
+function fill(t){ const p=S.profil, v={nom:p.nom||"[Ton nom]",insta:p.insta||"[@instagram]",book:p.book||"[lien du book]",tel:p.tel||"[téléphone]",ville:ville()}; return t.replace(/\{(\w+)\}/g,(_,k)=>v[k]??""); }
+function renderMessages(){
+  $("#tpls").innerHTML = TPLS.map((t,i) => {
+    const full = (t.s?"Objet : "+fill(t.s)+"\n\n":"") + fill(t.b);
+    return `<article class="panel tpl"><header><h3>${esc(t.t)}</h3><span class="when">${esc(t.w)}</span></header><pre id="tpl-${i}">${esc(full).replace(/\[([^\]]+)\]/g,"<mark>[$1]</mark>")}</pre><button class="btn ghost sm" type="button" data-copytpl="${i}">Copier le message</button></article>`;
+  }).join("");
+}
+$("#tpls").addEventListener("click", e => { const b=e.target.closest("[data-copytpl]"); if(b) copyText($("#tpl-"+b.dataset.copytpl), b); });
+
+/* ===== RÉGLAGES ===== */
+function renderReglages(){
+  const p = S.profil;
+  [["nom","nom"],["insta","insta"],["tel","tel"],["book","book"],["ville","ville"],["refs","refs"],["goal","objectif"],["kw","motsCles"]]
+    .forEach(([id,k]) => { const el=$("#s-"+id); if(document.activeElement!==el) el.value = p[k] ?? ""; });
+}
+function drawTarifs(rows){
+  $("#tarifs").innerHTML = rows.map(([a,b],i) => `<div class="tr"><input aria-label="Prestation" data-ta="${i}" value="${esc(a)}"><input aria-label="Prix" data-tb="${i}" value="${esc(b)}" placeholder="à fixer"><button class="btn ghost sm" type="button" data-tdel="${i}" aria-label="Supprimer la ligne">×</button></div>`).join("");
+}
+const readTarifs = () => $$("#tarifs .tr").map(r => [r.children[0].value.trim(), r.children[1].value.trim()]).filter(([a,b])=>a||b);
+async function saveProfil(silent){
+  ls.set("fds-profil-cache", S.profil);
+  if(!db) { if(!silent) $("#sf-msg").textContent = "Enregistré sur cet appareil seulement."; return; }
+  try{ await db.doc("reglages/profil").set({...S.profil}); if(!silent) $("#sf-msg").textContent = "Enregistré."; }
+  catch(err){ if(!silent) $("#sf-msg").textContent = writeErr(err); }
+}
+$("#sf").addEventListener("submit", e => {
+  e.preventDefault();
+  S.profil = {...S.profil, nom:$("#s-nom").value.trim(), insta:$("#s-insta").value.trim(), tel:$("#s-tel").value.trim(), book:$("#s-book").value.trim(),
+    ville:$("#s-ville").value.trim()||"Paris", refs:$("#s-refs").value.trim(), objectif:Math.max(1,Number($("#s-goal").value)||10), motsCles:$("#s-kw").value.trim()};
+  saveProfil(false); renderAll();
+});
+
+/* ===== ANNONCES ===== */
+const AF = { uni:"", pay:"" };
+const PAY_L = { remunere:"Payé", benevole:"Bénévole / défrayé", salarie:"Poste salarié", inconnu:"Rémunération ?" };
+function renderAnnonces(){
+  const showHid = $("#ann-hid").checked;
+  let rows = S.annonces.filter(a => showHid || a.statut!=="masquee");
+  if(AF.uni==="tournage") rows = rows.filter(a => a.univers==="cinema"||a.univers==="pub");
+  else if(AF.uni) rows = rows.filter(a => a.univers===AF.uni);
+  if(AF.pay) rows = rows.filter(a => a.paiement===AF.pay);
+  const rank = a => ({nouvelle:0, vue:1, postulee:2, masquee:3})[a.statut||"nouvelle"] ?? 1;
+  const prioU = a => ({cinema:0,pub:0,mode:1,mariage:2,marque:3})[a.univers] ?? 2;
+  rows.sort((a,b) => rank(a)-rank(b) || prioU(a)-prioU(b) || String(a.missionLe||"9").localeCompare(String(b.missionLe||"9")) || String(b.publieLe||"").localeCompare(String(a.publieLe||"")));
+  const nb = S.annonces.filter(a => (a.statut||"nouvelle")==="nouvelle").length;
+  $("#b-ann").textContent = nb; $("#b-ann").hidden = !nb;
+  const last = S.annonces.map(a => a.ajouteLe||"").sort().pop();
+  $("#ann-maj").textContent = last ? `Mis à jour le ${new Date(last).toLocaleDateString("fr-FR",{day:"numeric",month:"long"})} · ${S.annonces.filter(a=>a.statut!=="masquee").length} annonces` : "";
+  if(!rows.length){ $("#annlist").innerHTML = `<div class="empty">${!S.loaded?"Chargement des annonces…":S.annonces.length?"Rien dans ce filtre.":"Aucune annonce pour l'instant. Colle une annonce vue sur Insta en bas de la page."}</div>`; return; }
+  $("#annlist").innerHTML = rows.map(a => {
+    const lien = safeUrl(a.lien), st = a.statut||"nouvelle";
+    const passe = a.missionLe && a.missionLe < today();
+    return `<article class="card ann st-${esc(st)}" data-id="${esc(a.id)}">
+      <h4>${st==="nouvelle"?'<span class="tag new">nouvelle</span> ':""}${esc(a.titre)}</h4>
+      <div class="actions"><span class="pill pay-${esc(a.paiement||"inconnu")}">${esc(PAY_L[a.paiement]||PAY_L.inconnu)}</span></div>
+      <div class="meta">
+        <span class="pill u-${esc(a.univers)}">${esc(UNIV_SHORT[a.univers]||a.univers)}</span>
+        ${a.lieu?`<span>${esc(a.lieu)}</span>`:""}
+        ${a.missionTexte?`<span class="m ${passe?"":"flag"}">${passe?"date passée · ":""}${esc(a.missionTexte)}</span>`:""}
+        ${a.remuneration?`<span class="m">${esc(a.remuneration)}</span>`:""}
+        ${a.publieLe?`<span class="m">publiée ${fmt(a.publieLe)}</span>`:""}
+        ${a.source?`<span>via ${esc(a.source)}</span>`:""}
+      </div>
+      ${a.resume?`<p class="notes">${esc(a.resume)}</p>`:""}
+      <div class="sub actions" style="justify-content:flex-start">
+        ${lien?`<a class="btn sm" href="${esc(lien)}" target="_blank" rel="noopener">Voir l'annonce ↗</a>`:""}
+        ${canWrite && st!=="postulee"?`<button class="btn sm acc" data-ann="postuler" type="button">Je postule → Pistes</button>`:""}
+        ${st==="postulee"?`<span class="msg">Dans tes pistes ✓</span>`:""}
+        ${canWrite && st!=="masquee"?`<button class="btn sm ghost" data-ann="masquer" type="button">Pas pour moi</button>`:""}
+        ${canWrite && st==="masquee"?`<button class="btn sm ghost" data-ann="remettre" type="button">Remettre</button>`:""}
+      </div>
+    </article>`;
+  }).join("");
+}
+$("#ann-uni").addEventListener("click", e => { const b=e.target.closest("button"); if(!b) return; AF.uni=b.dataset.v; $$("#ann-uni button").forEach(x=>x.setAttribute("aria-pressed",x===b)); renderAnnonces(); });
+$("#ann-pay").addEventListener("click", e => { const b=e.target.closest("button"); if(!b) return; AF.pay=b.dataset.v; $$("#ann-pay button").forEach(x=>x.setAttribute("aria-pressed",x===b)); renderAnnonces(); });
+$("#ann-hid").addEventListener("change", renderAnnonces);
+$("#annlist").addEventListener("click", async e => {
+  const b = e.target.closest("[data-ann]"); if(!b || !db) return;
+  const id = b.closest(".card").dataset.id, a = S.annonces.find(x=>x.id===id); if(!a) return;
+  b.disabled = true;
+  try{
+    if(b.dataset.ann==="postuler"){
+      await db.doc("pistes/ann-"+id).set({ nom:a.titre, univers:a.univers||"autre", contact:a.contact||"Voir l'annonce", lien:a.lien||"", statut:"a_contacter",
+        envoyeLe:"", relanceLe:"", dates:a.missionTexte||"", tarif:a.remuneration||"", notes:a.resume||"", source:"annonce", creeLe:new Date().toISOString() });
+      await db.doc("annonces/"+id).update({statut:"postulee"});
+      showTab("pistes"); setPFilter("traiter"); window.scrollTo(0,0);
+    } else {
+      await db.doc("annonces/"+id).update({statut: b.dataset.ann==="masquer" ? "masquee" : "vue"});
+    }
+  }catch(err){ b.disabled = false; }
+});
+$("#ann-add").addEventListener("click", async () => {
+  const txt = $("#ann-paste").value.trim(), lien = safeUrl($("#ann-lien").value.trim());
+  if(!txt){ $("#ann-msg").textContent = "Colle d'abord le texte de l'annonce."; return; }
+  if(!db){ $("#ann-msg").textContent = "Enregistrement indisponible ici."; return; }
+  $("#ann-add").disabled = true;
+  let data = { titre: txt.split("\n")[0].slice(0,90), univers:"autre", paiement:"inconnu", lieu:"Paris", resume: txt.slice(0,400) };
+  if(sample){
+    $("#ann-msg").textContent = "Lecture de l'annonce…";
+    try{
+      const r = await sample.json(`Voici une annonce copiée par une maquilleuse professionnelle basée à Paris :
+"""
+${txt.slice(0,5000)}
+"""
+Réponds uniquement avec un objet JSON :
+{"titre":"intitulé court (projet + poste), max 80 caractères","univers":"cinema|pub|mode|mariage|marque|autre","paiement":"remunere|benevole|salarie|inconnu","remuneration":"montant tel qu'écrit, sinon vide","lieu":"arrondissement ou ville, sinon Paris","missionTexte":"date(s) de mission telles qu'écrites, sinon vide","missionLe":"première date de mission au format AAAA-MM-JJ si certaine (nous sommes le ${today()}), sinon vide","contact":"email, téléphone ou @compte à contacter, sinon vide","resume":"1 à 2 phrases : ce qui est demandé et les conditions"}
+N'invente rien qui n'est pas dans le texte.`, { modelTier:"quick" });
+      data = { ...data, ...Object.fromEntries(Object.entries(r||{}).filter(([k,v]) => typeof v==="string")) };
+      if(!UNIVERS.some(([u])=>u===data.univers)) data.univers = "autre";
+      if(!PAY_L[data.paiement]) data.paiement = "inconnu";
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(data.missionLe||"")) data.missionLe = "";
+    }catch(err){ /* on garde la version brute */ }
+  }
+  try{
+    await db.collection("annonces").add({ ...data, lien, source: lien.includes("instagram") ? "Instagram" : lien.includes("facebook") ? "Facebook" : "ajoutée à la main",
+      publieLe: today(), ajouteLe: new Date().toISOString(), ajoutePar:"elle", statut:"nouvelle" });
+    $("#ann-paste").value = ""; $("#ann-lien").value = ""; $("#ann-msg").textContent = "Ajoutée en haut du fil.";
+  }catch(err){ $("#ann-msg").textContent = writeErr(err); }
+  finally{ $("#ann-add").disabled = false; }
+});
+
+/* ===== Rendu global & base ===== */
+function renderAll(){ renderAnnonces(); renderJour(); renderChercher(); renderPistes(); renderReseau(); renderAgenda(); renderMessages(); renderReglages(); }
+renderAll();
+
+(async () => {
+  try{ db = await window.claude?.use?.("db"); }catch(e){ db = null; }
+  try{ sample = await window.claude?.use?.("sample"); }catch(e){ sample = null; }
+  if(!sample) $("#paste-go").textContent = "Remplir la fiche";
+  if(!db){
+    S.loaded = true; renderAll();
+    $("#annlist").innerHTML = $("#plist").innerHTML = $("#rlist").innerHTML = $("#alist").innerHTML = `<div class="empty">Les données s'affichent quand la page est ouverte depuis Claude, connectée.</div>`;
+    return;
+  }
+  try{ const u = await window.claude.use("user"); if(u){ const c = await u.can("data.write"); if(c===false) canWrite=false; } }catch(e){}
+  let pending = 5; const ready = () => { if(--pending<=0) S.loaded = true; };
+  const onErr = () => {};
+  db.collection("annonces").onSnapshot(s => { S.annonces = s.docs.map(d => ({id:d.id, ...d.data()})); ready(); renderAll(); }, onErr);
+  db.collection("pistes").onSnapshot(s => { S.pistes = s.docs.map(d => ({id:d.id, ...d.data()})); ready(); renderAll(); }, onErr);
+  db.collection("reseau").onSnapshot(s => { S.reseau = s.docs.map(d => ({id:d.id, ...d.data()})); ready(); renderAll(); }, onErr);
+  db.collection("agenda").onSnapshot(s => { S.agenda = s.docs.map(d => ({id:d.id, ...d.data()})); ready(); renderAll(); }, onErr);
+  db.collection("reglages").onSnapshot(s => {
+    s.docs.forEach(d => { if(d.id==="profil") S.profil = {...DEFAULT_PROFIL, ...d.data()}; if(d.id==="veille") S.veille = d.data(); });
+    ls.set("fds-profil-cache", S.profil); ready(); renderAll();
+  }, onErr);
+})();
+</script>
